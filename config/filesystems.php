@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        // Admin uploads live directly under public/ so no storage:link
+        // symlink is needed (it is unreliable on Windows).
+        'public_uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/uploads',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

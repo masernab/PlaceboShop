@@ -16,7 +16,7 @@ Laravel 13 + Inertia v3 + React 19 + TypeScript + Tailwind v4 + shadcn/ui + Fort
 | 4. Checkout + pedidos + email | [04-checkout-pedidos.md](04-checkout-pedidos.md) | ✅ Completada |
 | 5. Cupones | [05-cupones.md](05-cupones.md) | ✅ Completada |
 | 6. Wishlist + reseñas | [06-wishlist-resenas.md](06-wishlist-resenas.md) | ✅ Completada |
-| 7. Panel de administración | [07-admin.md](07-admin.md) | ⬜ Pendiente |
+| 7. Panel de administración | [07-admin.md](07-admin.md) | ✅ Completada |
 | 8. Pulido (i18n completo, estados vacíos, responsive) | [08-pulido.md](08-pulido.md) | ⬜ Pendiente |
 
 Al completar tareas, marcar los checkboxes del documento de fase y actualizar esta tabla (⬜ Pendiente / 🔶 En curso / ✅ Completada).

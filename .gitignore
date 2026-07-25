@@ -6,6 +6,7 @@
 /public/hot
 /public/images/products
 /public/storage
+/public/uploads
 /storage/*.key
 /storage/pail
 /resources/js/actions
