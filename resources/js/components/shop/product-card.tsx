@@ -1,7 +1,12 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import { ShoppingBag } from 'lucide-react';
+import type { MouseEvent } from 'react';
+import { toast } from 'sonner';
 import { Price } from '@/components/shop/price';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
+import { store as storeCartItem } from '@/routes/cart/items';
 import { show } from '@/routes/products';
 import type { ProductCardData } from '@/types/shop';
 
@@ -10,6 +15,20 @@ export function ProductCard({ product }: { product: ProductCardData }) {
     const onSale =
         product.compare_at_price_cents !== null &&
         product.compare_at_price_cents > product.price_cents;
+
+    const quickAdd = (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        router.post(
+            storeCartItem.url(),
+            { product_id: product.id, quantity: 1 },
+            {
+                preserveScroll: true,
+                onSuccess: () => toast.success(t('cart.added')),
+            },
+        );
+    };
 
     return (
         <Link href={show(product.slug)} className="group block">
@@ -27,6 +46,14 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                         {t('product.sale')}
                     </Badge>
                 )}
+                <Button
+                    size="icon"
+                    aria-label={t('product.add_to_cart')}
+                    onClick={quickAdd}
+                    className="absolute right-2 bottom-2 opacity-0 shadow-md transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                >
+                    <ShoppingBag />
+                </Button>
             </div>
             <div className="mt-3 space-y-1">
                 {product.category && (

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, Search, Sparkles, User as UserIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { CartBadge } from '@/components/shop/cart-badge';
 import { LanguageSwitcher } from '@/components/shop/language-switcher';
 import { Button } from '@/components/ui/button';
 import {
@@ -123,6 +124,8 @@ export default function ShopLayout({ children }: ShopLayoutProps) {
                         </form>
 
                         <LanguageSwitcher />
+
+                        <CartBadge />
 
                         {auth.user ? (
                             <DropdownMenu>

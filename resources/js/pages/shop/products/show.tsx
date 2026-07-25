@@ -1,13 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
-import { Minus, Plus, ShoppingBag } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Price } from '@/components/shop/price';
 import { ProductCard } from '@/components/shop/product-card';
+import { QuantityInput } from '@/components/shop/quantity-input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { store as storeCartItem } from '@/routes/cart/items';
 import { index as productsIndex } from '@/routes/products';
 import type { ProductCardData, ProductData } from '@/types/shop';
 
@@ -27,6 +30,17 @@ export default function ProductShow({ product, related }: ProductShowProps) {
         data.compare_at_price_cents !== null &&
         data.compare_at_price_cents > data.price_cents;
     const currentImage = data.images[selectedImage] ?? data.images[0];
+
+    const addToCart = () => {
+        router.post(
+            storeCartItem.url(),
+            { product_id: data.id, quantity },
+            {
+                preserveScroll: true,
+                onSuccess: () => toast.success(t('cart.added')),
+            },
+        );
+    };
 
     return (
         <>
@@ -114,47 +128,20 @@ export default function ProductShow({ product, related }: ProductShowProps) {
                     </p>
 
                     <div className="mt-8 flex flex-wrap items-center gap-4">
-                        <div className="flex items-center rounded-md border">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                aria-label="-"
-                                disabled={quantity <= 1}
-                                onClick={() => setQuantity(quantity - 1)}
-                            >
-                                <Minus />
-                            </Button>
-                            <span
-                                className="w-10 text-center text-sm font-medium tabular-nums"
-                                aria-label={t('product.quantity')}
-                            >
-                                {quantity}
-                            </span>
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                aria-label="+"
-                                disabled={quantity >= Math.max(data.stock, 1)}
-                                onClick={() => setQuantity(quantity + 1)}
-                            >
-                                <Plus />
-                            </Button>
-                        </div>
-                        {/* Cart arrives in Phase 3; until then the CTA is a disabled stub. */}
+                        <QuantityInput
+                            value={quantity}
+                            onChange={setQuantity}
+                            max={Math.max(data.stock, 1)}
+                        />
                         <Button
                             size="lg"
                             disabled={!inStock}
-                            title={t('product.coming_soon')}
+                            onClick={addToCart}
                         >
                             <ShoppingBag />
                             {t('product.add_to_cart')}
                         </Button>
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                        {t('product.coming_soon')}
-                    </p>
                 </div>
             </div>
 

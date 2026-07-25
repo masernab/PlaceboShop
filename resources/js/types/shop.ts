@@ -45,6 +45,25 @@ export type ProductFilters = {
     sort: ProductSort;
 };
 
+export type CartItemData = {
+    id: number;
+    quantity: number;
+    line_total_cents: number;
+    product: ProductCardData;
+};
+
+export type CartData = {
+    id: number;
+    items: CartItemData[];
+};
+
+export type CartTotals = {
+    subtotal_cents: number;
+    discount_cents: number;
+    shipping_cents: number;
+    total_cents: number;
+};
+
 export type PaginationLink = {
     url: string | null;
     label: string;
