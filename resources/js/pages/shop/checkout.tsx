@@ -3,6 +3,7 @@ import { CreditCard, Lock, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import InputError from '@/components/input-error';
+import { useCouponErrorTranslator } from '@/components/shop/coupon-form';
 import { formatPrice } from '@/components/shop/price';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ import type { CartData, CartTotals } from '@/types/shop';
 type CheckoutProps = {
     cart: { data: CartData };
     totals: CartTotals;
+    coupon: string | null;
     countries: string[];
 };
 
@@ -65,8 +67,14 @@ const formatExpiry = (value: string) => {
         : digits;
 };
 
-export default function Checkout({ cart, totals, countries }: CheckoutProps) {
+export default function Checkout({
+    cart,
+    totals,
+    coupon,
+    countries,
+}: CheckoutProps) {
     const { t, locale } = useTranslation();
+    const translateCouponError = useCouponErrorTranslator();
     const [fakeProcessing, setFakeProcessing] = useState(false);
 
     const form = useForm({
@@ -339,6 +347,13 @@ export default function Checkout({ cart, totals, countries }: CheckoutProps) {
                         </div>
                     </section>
 
+                    <InputError
+                        message={translateCouponError(
+                            (form.errors as Record<string, string | undefined>)
+                                .coupon,
+                        )}
+                    />
+
                     <Button
                         type="submit"
                         size="lg"
@@ -397,6 +412,18 @@ export default function Checkout({ cart, totals, countries }: CheckoutProps) {
                                 {formatPrice(totals.subtotal_cents, locale)}
                             </dd>
                         </div>
+                        {totals.discount_cents > 0 && (
+                            <div className="flex justify-between text-emerald-600">
+                                <dt>
+                                    {t('cart.discount')}
+                                    {coupon !== null && ` (${coupon})`}
+                                </dt>
+                                <dd className="tabular-nums">
+                                    −
+                                    {formatPrice(totals.discount_cents, locale)}
+                                </dd>
+                            </div>
+                        )}
                         <div className="flex justify-between">
                             <dt className="text-muted-foreground">
                                 {t('cart.shipping')}

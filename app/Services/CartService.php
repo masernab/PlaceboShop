@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -88,16 +89,41 @@ class CartService
     }
 
     /**
-     * Compute the cart totals. Coupons arrive in Phase 5; until then the
-     * discount is always zero. Shipping is a flat fake fee, free above the
+     * The coupon applied in the current session, or null. A coupon that is
+     * no longer redeemable for this cart is silently dropped from the session.
+     */
+    public function appliedCoupon(Cart $cart): ?Coupon
+    {
+        $code = session('coupon_code');
+
+        if (! is_string($code)) {
+            return null;
+        }
+
+        $coupon = Coupon::query()->where('code', $code)->first();
+
+        if ($coupon === null || ! $coupon->isRedeemable($cart->subtotalCents())) {
+            session()->forget('coupon_code');
+
+            return null;
+        }
+
+        return $coupon;
+    }
+
+    /**
+     * Compute the cart totals. Shipping is a flat fake fee, free above the
      * threshold (nothing ever ships either way).
      *
      * @return array{subtotal_cents: int, discount_cents: int, shipping_cents: int, total_cents: int}
      */
-    public function totals(Cart $cart): array
+    public function totals(Cart $cart, ?Coupon $coupon = null): array
     {
         $subtotal = $cart->subtotalCents();
-        $discount = 0;
+
+        $discount = $coupon !== null && $coupon->isRedeemable($subtotal)
+            ? $coupon->discountFor($subtotal)
+            : 0;
 
         $shipping = $subtotal === 0 || $subtotal >= self::FREE_SHIPPING_THRESHOLD_CENTS
             ? 0

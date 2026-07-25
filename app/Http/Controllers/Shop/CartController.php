@@ -22,9 +22,12 @@ class CartController extends Controller
         $cart = $this->cartService->current();
         $cart?->load(['items.product.primaryImage', 'items.product.category']);
 
+        $coupon = $cart === null ? null : $this->cartService->appliedCoupon($cart);
+
         return Inertia::render('shop/cart', [
             'cart' => $cart === null ? null : new CartResource($cart),
-            'totals' => $cart === null ? null : $this->cartService->totals($cart),
+            'totals' => $cart === null ? null : $this->cartService->totals($cart, $coupon),
+            'coupon' => $coupon?->code,
         ]);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Shop\CartController;
+use App\Http\Controllers\Shop\CartCouponController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\HomeController;
 use App\Http\Controllers\Shop\OrderController;
@@ -16,6 +17,8 @@ Route::get('cart', [CartController::class, 'show'])->name('cart.show');
 Route::post('cart/items', [CartController::class, 'storeItem'])->name('cart.items.store');
 Route::put('cart/items/{cartItem}', [CartController::class, 'updateItem'])->name('cart.items.update');
 Route::delete('cart/items/{cartItem}', [CartController::class, 'destroyItem'])->name('cart.items.destroy');
+Route::post('cart/coupon', [CartCouponController::class, 'store'])->name('cart.coupon.store');
+Route::delete('cart/coupon', [CartCouponController::class, 'destroy'])->name('cart.coupon.destroy');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');

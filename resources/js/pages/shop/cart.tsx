@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { CouponForm } from '@/components/shop/coupon-form';
 import { formatPrice, Price } from '@/components/shop/price';
 import { QuantityInput } from '@/components/shop/quantity-input';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import type { CartData, CartItemData, CartTotals } from '@/types/shop';
 type CartPageProps = {
     cart: { data: CartData } | null;
     totals: CartTotals | null;
+    coupon: string | null;
 };
 
 function CartLine({ item }: { item: CartItemData }) {
@@ -99,7 +101,7 @@ function CartLine({ item }: { item: CartItemData }) {
     );
 }
 
-export default function Cart({ cart, totals }: CartPageProps) {
+export default function Cart({ cart, totals, coupon }: CartPageProps) {
     const { auth } = usePage().props;
     const { t, locale } = useTranslation();
 
@@ -146,7 +148,10 @@ export default function Cart({ cart, totals }: CartPageProps) {
                             </div>
                             {totals.discount_cents > 0 && (
                                 <div className="flex justify-between text-emerald-600">
-                                    <dt>{t('cart.discount')}</dt>
+                                    <dt>
+                                        {t('cart.discount')}
+                                        {coupon !== null && ` (${coupon})`}
+                                    </dt>
                                     <dd className="tabular-nums">
                                         −
                                         {formatPrice(
@@ -170,6 +175,9 @@ export default function Cart({ cart, totals }: CartPageProps) {
                                 </dd>
                             </div>
                         </dl>
+                        <div className="mt-4">
+                            <CouponForm appliedCode={coupon} />
+                        </div>
                         <Separator className="my-4" />
                         <div className="flex justify-between font-semibold">
                             <span>{t('cart.total')}</span>

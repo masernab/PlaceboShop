@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shop\StoreOrderRequest;
 use App\Http\Resources\CartResource;
 use App\Mail\OrderConfirmationMail;
+use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Services\CartService;
 use App\Support\CardBrand;
@@ -32,9 +34,12 @@ class CheckoutController extends Controller
             return redirect()->route('cart.show');
         }
 
+        $coupon = $this->cartService->appliedCoupon($cart);
+
         return Inertia::render('shop/checkout', [
             'cart' => new CartResource($cart),
-            'totals' => $this->cartService->totals($cart),
+            'totals' => $this->cartService->totals($cart, $coupon),
+            'coupon' => $coupon?->code,
             'countries' => StoreOrderRequest::COUNTRIES,
         ]);
     }
@@ -57,10 +62,11 @@ class CheckoutController extends Controller
             ]);
         }
 
-        $totals = $this->cartService->totals($cart);
+        $coupon = $this->resolveCouponForPayment($cart);
+        $totals = $this->cartService->totals($cart, $coupon);
         $user = $request->user();
 
-        $order = DB::transaction(function () use ($cart, $validated, $cardDigits, $totals, $user): Order {
+        $order = DB::transaction(function () use ($cart, $validated, $cardDigits, $totals, $coupon, $user): Order {
             $order = Order::query()->create([
                 'user_id' => $user->id,
                 'order_number' => $this->generateOrderNumber(),
@@ -69,6 +75,8 @@ class CheckoutController extends Controller
                 'discount_cents' => $totals['discount_cents'],
                 'shipping_cents' => $totals['shipping_cents'],
                 'total_cents' => $totals['total_cents'],
+                'coupon_id' => $coupon?->id,
+                'coupon_code' => $coupon?->code,
                 'card_brand' => CardBrand::detect($cardDigits),
                 'card_last4' => substr($cardDigits, -4),
                 'tracking_number' => $this->generateTrackingNumber(),
@@ -91,15 +99,43 @@ class CheckoutController extends Controller
             }
 
             $cart->items()->delete();
+            $coupon?->increment('used_count');
 
             return $order;
         });
+
+        session()->forget('coupon_code');
 
         Mail::to($user)->queue(new OrderConfirmationMail($order, app()->getLocale()));
 
         return redirect()
             ->route('orders.show', $order)
             ->with('justPlaced', true);
+    }
+
+    /**
+     * Re-validate the session coupon at payment time — it may have expired
+     * or been exhausted between applying it and paying.
+     */
+    private function resolveCouponForPayment(Cart $cart): ?Coupon
+    {
+        $code = session('coupon_code');
+
+        if (! is_string($code)) {
+            return null;
+        }
+
+        $coupon = Coupon::query()->where('code', $code)->first();
+
+        if ($coupon === null || ! $coupon->isRedeemable($cart->subtotalCents())) {
+            session()->forget('coupon_code');
+
+            throw ValidationException::withMessages([
+                'coupon' => 'coupon.error_invalid',
+            ]);
+        }
+
+        return $coupon;
     }
 
     private function generateOrderNumber(): string
