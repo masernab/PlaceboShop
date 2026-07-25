@@ -14,6 +14,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             locale: string;
             cart: { count: number };
+            wishlist: number[];
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

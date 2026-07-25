@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, Search, Sparkles, User as UserIcon } from 'lucide-react';
+import { Heart, Menu, Search, Sparkles, User as UserIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { AppearanceToggle } from '@/components/shop/appearance-toggle';
 import { CartBadge } from '@/components/shop/cart-badge';
@@ -127,6 +127,17 @@ export default function ShopLayout({ children }: ShopLayoutProps) {
                         <AppearanceToggle />
 
                         <LanguageSwitcher />
+
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={t('nav.wishlist')}
+                            asChild
+                        >
+                            <Link href="/wishlist">
+                                <Heart />
+                            </Link>
+                        </Button>
 
                         <CartBadge />
 

@@ -45,6 +45,34 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * @return HasMany<WishlistItem, $this>
+     */
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
+    /**
+     * @return HasMany<Review, $this>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Whether the user has ever placed an order containing this product.
+     */
+    public function hasPurchased(Product $product): bool
+    {
+        return $this->orders()
+            ->whereHas('items', function ($query) use ($product): void {
+                $query->where('product_id', $product->id);
+            })
+            ->exists();
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

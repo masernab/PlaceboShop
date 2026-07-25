@@ -43,6 +43,9 @@ class HandleInertiaRequests extends Middleware
             'cart' => fn (): array => [
                 'count' => app(CartService::class)->itemCount(),
             ],
+            'wishlist' => fn (): array => $request->user() === null
+                ? []
+                : $request->user()->wishlistItems()->pluck('product_id')->all(),
             'auth' => [
                 'user' => $request->user(),
             ],

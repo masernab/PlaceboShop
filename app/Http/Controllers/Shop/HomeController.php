@@ -18,6 +18,8 @@ class HomeController extends Controller
             ->active()
             ->featured()
             ->with(['primaryImage', 'category'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->latest()
             ->take(8)
             ->get();

@@ -18,6 +18,8 @@ export type ProductCardData = {
     name: string;
     price_cents: number;
     compare_at_price_cents: number | null;
+    rating_avg: number | null;
+    reviews_count: number;
     image?: ProductImageData | null;
     category?: CategoryData;
 };
@@ -31,8 +33,19 @@ export type ProductData = {
     price_cents: number;
     compare_at_price_cents: number | null;
     stock: number;
+    rating_avg: number | null;
+    reviews_count: number;
     images: ProductImageData[];
     category: CategoryData;
+};
+
+export type ReviewData = {
+    id: number;
+    rating: number;
+    title: string | null;
+    body: string;
+    author: string;
+    created_at: string | null;
 };
 
 export type ProductSort = 'newest' | 'price_asc' | 'price_desc' | 'name';

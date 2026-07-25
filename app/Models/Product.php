@@ -28,6 +28,8 @@ use Illuminate\Support\Carbon;
  * @property bool $is_featured
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read float|string|null $reviews_avg_rating
+ * @property-read int|null $reviews_count
  */
 #[Fillable([
     'category_id',
@@ -83,6 +85,34 @@ class Product extends Model
     public function primaryImage(): HasOne
     {
         return $this->hasOne(ProductImage::class)->ofMany('position', 'min');
+    }
+
+    /**
+     * @return HasMany<Review, $this>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * @return HasMany<WishlistItem, $this>
+     */
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
+    public function wishlistedBy(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        return WishlistItem::query()
+            ->where('user_id', $user->id)
+            ->where('product_id', $this->id)
+            ->exists();
     }
 
     /**

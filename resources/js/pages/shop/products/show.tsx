@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 import { Price } from '@/components/shop/price';
 import { ProductCard } from '@/components/shop/product-card';
 import { QuantityInput } from '@/components/shop/quantity-input';
+import { ReviewsSection } from '@/components/shop/reviews-section';
+import { StarRating } from '@/components/shop/star-rating';
+import { WishlistButton } from '@/components/shop/wishlist-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -12,14 +15,21 @@ import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { store as storeCartItem } from '@/routes/cart/items';
 import { index as productsIndex } from '@/routes/products';
-import type { ProductCardData, ProductData } from '@/types/shop';
+import type { ProductCardData, ProductData, ReviewData } from '@/types/shop';
 
 type ProductShowProps = {
     product: { data: ProductData };
+    reviews: { data: ReviewData[] };
+    canReview: boolean;
     related: { data: ProductCardData[] };
 };
 
-export default function ProductShow({ product, related }: ProductShowProps) {
+export default function ProductShow({
+    product,
+    reviews,
+    canReview,
+    related,
+}: ProductShowProps) {
     const { t } = useTranslation();
     const { data } = product;
     const [selectedImage, setSelectedImage] = useState(0);
@@ -100,6 +110,20 @@ export default function ProductShow({ product, related }: ProductShowProps) {
                     <h1 className="mt-1 text-3xl font-bold tracking-tight">
                         {data.name}
                     </h1>
+                    {data.rating_avg !== null && (
+                        <a
+                            href="#reviews"
+                            className="mt-2 flex w-fit items-center gap-1.5"
+                        >
+                            <StarRating value={data.rating_avg} />
+                            <span className="text-sm text-muted-foreground">
+                                {data.rating_avg} ·{' '}
+                                {t('reviews.count', {
+                                    count: data.reviews_count,
+                                })}
+                            </span>
+                        </a>
+                    )}
                     <Price
                         cents={data.price_cents}
                         compareAtCents={data.compare_at_price_cents}
@@ -141,9 +165,22 @@ export default function ProductShow({ product, related }: ProductShowProps) {
                             <ShoppingBag />
                             {t('product.add_to_cart')}
                         </Button>
+                        <WishlistButton
+                            productId={data.id}
+                            variant="outline"
+                            className="size-10"
+                        />
                     </div>
                 </div>
             </div>
+
+            <ReviewsSection
+                productSlug={data.slug}
+                ratingAvg={data.rating_avg}
+                reviewsCount={data.reviews_count}
+                reviews={reviews.data}
+                canReview={canReview}
+            />
 
             {related.data.length > 0 && (
                 <section className="mt-16">

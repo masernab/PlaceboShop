@@ -3,6 +3,8 @@ import { ShoppingBag } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { Price } from '@/components/shop/price';
+import { StarRating } from '@/components/shop/star-rating';
+import { WishlistButton } from '@/components/shop/wishlist-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
@@ -46,6 +48,10 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                         {t('product.sale')}
                     </Badge>
                 )}
+                <WishlistButton
+                    productId={product.id}
+                    className="absolute top-2 right-2 size-8 shadow-sm"
+                />
                 <Button
                     size="icon"
                     aria-label={t('product.add_to_cart')}
@@ -64,6 +70,14 @@ export function ProductCard({ product }: { product: ProductCardData }) {
                 <h3 className="text-sm font-medium group-hover:underline">
                     {product.name}
                 </h3>
+                {product.rating_avg !== null && (
+                    <span className="flex items-center gap-1">
+                        <StarRating value={product.rating_avg} />
+                        <span className="text-xs text-muted-foreground">
+                            ({product.reviews_count})
+                        </span>
+                    </span>
+                )}
                 <Price
                     cents={product.price_cents}
                     compareAtCents={product.compare_at_price_cents}
