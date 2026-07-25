@@ -30,7 +30,11 @@ export function LanguageSwitcher() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" aria-label={t('common.language')}>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t('common.language')}
+                >
                     <Globe />
                     <span className="uppercase">{locale}</span>
                 </Button>

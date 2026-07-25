@@ -135,7 +135,10 @@ export default function ShopLayout({ children }: ShopLayoutProps) {
                                         <UserIcon />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="w-56"
+                                >
                                     <UserMenuContent user={auth.user} />
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -145,7 +148,9 @@ export default function ShopLayout({ children }: ShopLayoutProps) {
                                     <Link href={login()}>{t('nav.login')}</Link>
                                 </Button>
                                 <Button size="sm" asChild>
-                                    <Link href={register()}>{t('nav.register')}</Link>
+                                    <Link href={register()}>
+                                        {t('nav.register')}
+                                    </Link>
                                 </Button>
                             </div>
                         )}

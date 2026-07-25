@@ -11,7 +11,7 @@ Laravel 13 + Inertia v3 + React 19 + TypeScript + Tailwind v4 + shadcn/ui + Fort
 | Fase | Documento | Estado |
 |---|---|---|
 | 1. Fundaciones (i18n, admin flag, shop layout) | [01-fundaciones.md](01-fundaciones.md) | ✅ Completada |
-| 2. Catálogo (productos, categorías, seed) | [02-catalogo.md](02-catalogo.md) | ⬜ Pendiente |
+| 2. Catálogo (productos, categorías, seed) | [02-catalogo.md](02-catalogo.md) | ✅ Completada |
 | 3. Carrito | [03-carrito.md](03-carrito.md) | ⬜ Pendiente |
 | 4. Checkout + pedidos + email | [04-checkout-pedidos.md](04-checkout-pedidos.md) | ⬜ Pendiente |
 | 5. Cupones | [05-cupones.md](05-cupones.md) | ⬜ Pendiente |
@@ -57,7 +57,7 @@ php artisan dev                    # navegar http://placeboshop.test
 
 ## Entorno (Windows + Herd)
 
-Resuelto el 2026-07-25: la versión global de Herd estaba en 8.2 y se cambió con `herd use 8.5`, así que `php` en terminales nuevas ya resuelve 8.5.8. Si una terminal abierta antes del cambio sigue resolviendo 8.2, reabrirla (o quitar `herd\bin\php82` de su `$env:PATH`).
+Resuelto el 2026-07-25: la versión global de Herd estaba en 8.2 y se cambió con `herd use 8.5`, así que `php` en terminales nuevas ya resuelve 8.5.8. Si una terminal abierta antes del cambio sigue resolviendo 8.2, reabrirla (o quitar `herd\bin\php82` de su `$env:PATH`). Ojo: un PATH obsoleto también rompe `composer test` y `npm run build` (el plugin de Wayfinder invoca `php artisan` vía cmd, que resuelve `php82\php.exe` antes que el shim `php.bat`).
 
 Nota: `php artisan wayfinder:generate` manual necesita `--with-form` (el plugin de Vite ya lo hace con `formVariants: true`).
 

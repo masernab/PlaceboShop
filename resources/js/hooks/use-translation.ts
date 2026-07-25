@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import en from '@/lang/en';
-import type {TranslationKey} from '@/lang/en';
+import type { TranslationKey } from '@/lang/en';
 import es from '@/lang/es';
 
 const dictionaries: Record<string, Record<TranslationKey, string>> = { en, es };
