@@ -11,6 +11,7 @@ import {
     destroy as destroyCartItem,
     update as updateCartItem,
 } from '@/routes/cart/items';
+import { show as checkoutShow } from '@/routes/checkout';
 import { index as productsIndex, show as productShow } from '@/routes/products';
 import type { CartData, CartItemData, CartTotals } from '@/types/shop';
 
@@ -177,20 +178,11 @@ export default function Cart({ cart, totals }: CartPageProps) {
                             </span>
                         </div>
                         {auth.user ? (
-                            <>
-                                {/* Checkout arrives in Phase 4. */}
-                                <Button
-                                    className="mt-6 w-full"
-                                    size="lg"
-                                    disabled
-                                    title={t('product.coming_soon')}
-                                >
+                            <Button className="mt-6 w-full" size="lg" asChild>
+                                <Link href={checkoutShow()}>
                                     {t('cart.checkout')}
-                                </Button>
-                                <p className="mt-2 text-center text-xs text-muted-foreground">
-                                    {t('product.coming_soon')}
-                                </p>
-                            </>
+                                </Link>
+                            </Button>
                         ) : (
                             <Button className="mt-6 w-full" size="lg" asChild>
                                 <Link href={login()}>

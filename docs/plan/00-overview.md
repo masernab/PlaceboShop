@@ -13,7 +13,7 @@ Laravel 13 + Inertia v3 + React 19 + TypeScript + Tailwind v4 + shadcn/ui + Fort
 | 1. Fundaciones (i18n, admin flag, shop layout) | [01-fundaciones.md](01-fundaciones.md) | ✅ Completada |
 | 2. Catálogo (productos, categorías, seed) | [02-catalogo.md](02-catalogo.md) | ✅ Completada |
 | 3. Carrito | [03-carrito.md](03-carrito.md) | ✅ Completada |
-| 4. Checkout + pedidos + email | [04-checkout-pedidos.md](04-checkout-pedidos.md) | ⬜ Pendiente |
+| 4. Checkout + pedidos + email | [04-checkout-pedidos.md](04-checkout-pedidos.md) | ✅ Completada |
 | 5. Cupones | [05-cupones.md](05-cupones.md) | ⬜ Pendiente |
 | 6. Wishlist + reseñas | [06-wishlist-resenas.md](06-wishlist-resenas.md) | ⬜ Pendiente |
 | 7. Panel de administración | [07-admin.md](07-admin.md) | ⬜ Pendiente |

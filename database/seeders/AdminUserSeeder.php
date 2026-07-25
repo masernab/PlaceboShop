@@ -13,6 +13,7 @@ class AdminUserSeeder extends Seeder
             User::factory()->admin()->create([
                 'name' => 'Placebo Admin',
                 'email' => 'admin@placeboshop.test',
+                'password' => bcrypt('password'),
             ]);
         }
 
@@ -20,6 +21,7 @@ class AdminUserSeeder extends Seeder
             User::factory()->create([
                 'name' => 'Demo Shopper',
                 'email' => 'demo@placeboshop.test',
+                'password' => bcrypt('password'),
             ]);
         }
     }

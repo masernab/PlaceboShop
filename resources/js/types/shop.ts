@@ -64,6 +64,56 @@ export type CartTotals = {
     total_cents: number;
 };
 
+export type OrderStatusValue =
+    | 'paid'
+    | 'processing'
+    | 'shipped'
+    | 'out_for_delivery'
+    | 'delivered'
+    | 'cancelled';
+
+export type TimelineEntry = {
+    status: Exclude<OrderStatusValue, 'cancelled'>;
+    at: string;
+    reached: boolean;
+};
+
+export type OrderItemData = {
+    id: number;
+    product_id: number | null;
+    name: string;
+    unit_price_cents: number;
+    quantity: number;
+    line_total_cents: number;
+    image_url: string | null;
+};
+
+export type OrderData = {
+    id: number;
+    order_number: string;
+    placed_at: string;
+    cancelled_at: string | null;
+    status: OrderStatusValue;
+    subtotal_cents: number;
+    discount_cents: number;
+    shipping_cents: number;
+    total_cents: number;
+    coupon_code: string | null;
+    card_brand: string;
+    card_last4: string;
+    tracking_number: string;
+    ship: {
+        name: string;
+        line1: string;
+        line2: string | null;
+        city: string;
+        postal_code: string;
+        country: string;
+    };
+    timeline: TimelineEntry[];
+    items?: OrderItemData[];
+};
+
 export type PaginationLink = {
     url: string | null;
     label: string;
