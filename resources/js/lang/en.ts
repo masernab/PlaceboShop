@@ -15,6 +15,7 @@ const en = {
     'footer.disclaimer':
         'PlaceboShop is a placebo store: every purchase is simulated. No real money is ever charged and no products are ever shipped.',
     'common.language': 'Language',
+    'common.toggle_theme': 'Toggle dark mode',
     'home.hero_title': 'All the joy of shopping. None of the regret.',
     'home.hero_subtitle':
         'Browse, fill your cart, and check out — nothing is ever charged and nothing ever ships. Pure placebo.',
