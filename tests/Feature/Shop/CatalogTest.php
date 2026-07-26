@@ -116,6 +116,21 @@ class CatalogTest extends TestCase
         );
     }
 
+    public function test_category_counts_ignore_inactive_products()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        $dresses = Category::factory()->childOf($fashion)->create();
+        Product::factory()->for($fashion)->create();
+        Product::factory()->for($fashion)->inactive()->create();
+        Product::factory()->for($dresses)->create();
+        Product::factory()->for($dresses)->inactive()->count(2)->create();
+
+        $this->get('/products')->assertInertia(fn (Assert $page) => $page
+            ->where('categories.data.0.products_count', 2)
+            ->where('categories.data.0.children.0.products_count', 1)
+        );
+    }
+
     public function test_index_filters_by_price_range()
     {
         Product::factory()->create(['price_cents' => 1000]);

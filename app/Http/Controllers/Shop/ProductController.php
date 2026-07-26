@@ -9,6 +9,7 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\ReviewResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -45,8 +46,15 @@ class ProductController extends Controller
         $categories = Category::query()
             ->roots()
             ->ordered()
-            ->withCount(['products', 'childProducts'])
-            ->with(['children' => fn (Relation $query) => $query->withCount('products')])
+            // Only active products are reachable from the shop, so the
+            // facet counts have to ignore the inactive ones too.
+            ->withCount([
+                'products' => $this->onlyActive(...),
+                'childProducts' => $this->onlyActive(...),
+            ])
+            ->with(['children' => fn (Relation $query) => $query->withCount([
+                'products' => $this->onlyActive(...),
+            ])])
             ->get();
 
         return Inertia::render('shop/products/index', [
@@ -88,5 +96,15 @@ class ProductController extends Controller
             'canReview' => $canReview,
             'related' => ProductCardResource::collection($related),
         ]);
+    }
+
+    /**
+     * Constrain a product count so it only tallies what the shop shows.
+     *
+     * @param  Builder<Product>  $query
+     */
+    private function onlyActive(Builder $query): void
+    {
+        $query->active();
     }
 }
