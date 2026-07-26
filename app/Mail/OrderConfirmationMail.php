@@ -21,18 +21,13 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        $subject = $this->locale === 'es'
-            ? "Tu pedido {$this->order->order_number} está confirmado ✨"
-            : "Your order {$this->order->order_number} is confirmed ✨";
-
-        return new Envelope(subject: $subject);
+        return new Envelope(
+            subject: __('shop.order_confirmed_subject', ['number' => $this->order->order_number], $this->locale),
+        );
     }
 
     public function content(): Content
     {
-        return new Content(
-            markdown: 'mail.orders.confirmation',
-            with: ['locale' => $this->locale],
-        );
+        return new Content(markdown: 'mail.orders.confirmation');
     }
 }

@@ -185,62 +185,70 @@ export default function AdminCategoriesIndex({
 
             <Card>
                 <CardContent>
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b text-left text-muted-foreground">
-                                <th className="py-2 font-medium">Name (EN)</th>
-                                <th className="hidden py-2 font-medium sm:table-cell">
-                                    Name (ES)
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Position
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Products
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    <span className="sr-only">Actions</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {categories.data.map((category) => (
-                                <tr key={category.id} className="border-b">
-                                    <td className="py-2.5 font-medium">
-                                        {category.name.en}
-                                    </td>
-                                    <td className="hidden py-2.5 sm:table-cell">
-                                        {category.name.es}
-                                    </td>
-                                    <td className="py-2.5 text-right tabular-nums">
-                                        {category.position}
-                                    </td>
-                                    <td className="py-2.5 text-right tabular-nums">
-                                        {category.products_count}
-                                    </td>
-                                    <td className="py-2.5 text-right whitespace-nowrap">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Edit ${category.name.en}`}
-                                            onClick={() => setEditing(category)}
-                                        >
-                                            <Pencil />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Delete ${category.name.en}`}
-                                            onClick={() => destroy(category)}
-                                            className="text-muted-foreground hover:text-destructive"
-                                        >
-                                            <Trash2 />
-                                        </Button>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left text-muted-foreground">
+                                    <th className="py-2 font-medium">
+                                        Name (EN)
+                                    </th>
+                                    <th className="hidden py-2 font-medium sm:table-cell">
+                                        Name (ES)
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Position
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Products
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        <span className="sr-only">Actions</span>
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {categories.data.map((category) => (
+                                    <tr key={category.id} className="border-b">
+                                        <td className="py-2.5 font-medium">
+                                            {category.name.en}
+                                        </td>
+                                        <td className="hidden py-2.5 sm:table-cell">
+                                            {category.name.es}
+                                        </td>
+                                        <td className="py-2.5 text-right tabular-nums">
+                                            {category.position}
+                                        </td>
+                                        <td className="py-2.5 text-right tabular-nums">
+                                            {category.products_count}
+                                        </td>
+                                        <td className="py-2.5 text-right whitespace-nowrap">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Edit ${category.name.en}`}
+                                                onClick={() =>
+                                                    setEditing(category)
+                                                }
+                                            >
+                                                <Pencil />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Delete ${category.name.en}`}
+                                                onClick={() =>
+                                                    destroy(category)
+                                                }
+                                                className="text-muted-foreground hover:text-destructive"
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </CardContent>
             </Card>
 

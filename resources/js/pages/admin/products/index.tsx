@@ -73,109 +73,115 @@ export default function AdminProductsIndex({
 
             <Card>
                 <CardContent>
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b text-left text-muted-foreground">
-                                <th className="py-2 font-medium">Product</th>
-                                <th className="hidden py-2 font-medium md:table-cell">
-                                    Category
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Price
-                                </th>
-                                <th className="hidden py-2 text-right font-medium sm:table-cell">
-                                    Stock
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Status
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    <span className="sr-only">Actions</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.data.map((product) => (
-                                <tr key={product.id} className="border-b">
-                                    <td className="py-2.5">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-9 shrink-0">
-                                                <div className="aspect-[4/5] overflow-hidden rounded bg-muted">
-                                                    {product.thumbnail_url && (
-                                                        <img
-                                                            src={
-                                                                product.thumbnail_url
-                                                            }
-                                                            alt=""
-                                                            className="size-full object-cover"
-                                                        />
-                                                    )}
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left text-muted-foreground">
+                                    <th className="py-2 font-medium">
+                                        Product
+                                    </th>
+                                    <th className="hidden py-2 font-medium md:table-cell">
+                                        Category
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Price
+                                    </th>
+                                    <th className="hidden py-2 text-right font-medium sm:table-cell">
+                                        Stock
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Status
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        <span className="sr-only">Actions</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.data.map((product) => (
+                                    <tr key={product.id} className="border-b">
+                                        <td className="py-2.5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 shrink-0">
+                                                    <div className="aspect-[4/5] overflow-hidden rounded bg-muted">
+                                                        {product.thumbnail_url && (
+                                                            <img
+                                                                src={
+                                                                    product.thumbnail_url
+                                                                }
+                                                                alt=""
+                                                                className="size-full object-cover"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">
+                                                        {product.name.en}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {product.sku}
+                                                        {product.is_featured &&
+                                                            ' · Featured'}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <p className="font-medium">
-                                                    {product.name.en}
-                                                </p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {product.sku}
-                                                    {product.is_featured &&
-                                                        ' · Featured'}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="hidden py-2.5 md:table-cell">
-                                        {product.category?.name.en}
-                                    </td>
-                                    <td className="py-2.5 text-right tabular-nums">
-                                        {formatPrice(
-                                            product.price_cents,
-                                            'en-US',
-                                        )}
-                                    </td>
-                                    <td className="hidden py-2.5 text-right tabular-nums sm:table-cell">
-                                        {product.stock}
-                                    </td>
-                                    <td className="py-2.5 text-right">
-                                        <Badge
-                                            variant={
-                                                product.is_active
-                                                    ? 'secondary'
-                                                    : 'outline'
-                                            }
-                                        >
-                                            {product.is_active
-                                                ? 'Active'
-                                                : 'Inactive'}
-                                        </Badge>
-                                    </td>
-                                    <td className="py-2.5 text-right whitespace-nowrap">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Edit ${product.name.en}`}
-                                            asChild
-                                        >
-                                            <Link
-                                                href={productEdit(product.id)}
+                                        </td>
+                                        <td className="hidden py-2.5 md:table-cell">
+                                            {product.category?.name.en}
+                                        </td>
+                                        <td className="py-2.5 text-right tabular-nums">
+                                            {formatPrice(
+                                                product.price_cents,
+                                                'en-US',
+                                            )}
+                                        </td>
+                                        <td className="hidden py-2.5 text-right tabular-nums sm:table-cell">
+                                            {product.stock}
+                                        </td>
+                                        <td className="py-2.5 text-right">
+                                            <Badge
+                                                variant={
+                                                    product.is_active
+                                                        ? 'secondary'
+                                                        : 'outline'
+                                                }
                                             >
-                                                <Pencil />
-                                            </Link>
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Delete ${product.name.en}`}
-                                            onClick={() => destroy(product)}
-                                            className="text-muted-foreground hover:text-destructive"
-                                        >
-                                            <Trash2 />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                                {product.is_active
+                                                    ? 'Active'
+                                                    : 'Inactive'}
+                                            </Badge>
+                                        </td>
+                                        <td className="py-2.5 text-right whitespace-nowrap">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Edit ${product.name.en}`}
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={productEdit(
+                                                        product.id,
+                                                    )}
+                                                >
+                                                    <Pencil />
+                                                </Link>
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Delete ${product.name.en}`}
+                                                onClick={() => destroy(product)}
+                                                className="text-muted-foreground hover:text-destructive"
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
                     {products.meta.last_page > 1 && (
                         <div className="mt-4 flex justify-center gap-2">

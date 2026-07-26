@@ -12,13 +12,13 @@ class LuhnCard implements ValidationRule
         $digits = is_string($value) ? str_replace(' ', '', $value) : '';
 
         if (in_array(preg_match('/^\d{13,19}$/', $digits), [0, false], true)) {
-            $fail('The card number must be 13 to 19 digits.');
+            $fail('shop.card_number_length')->translate();
 
             return;
         }
 
         if (! $this->passesLuhn($digits)) {
-            $fail('The card number is not valid.');
+            $fail('shop.card_number_invalid')->translate();
         }
     }
 

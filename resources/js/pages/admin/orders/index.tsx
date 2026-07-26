@@ -31,57 +31,61 @@ export default function AdminOrdersIndex({ orders }: OrdersIndexProps) {
 
             <Card>
                 <CardContent>
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b text-left text-muted-foreground">
-                                <th className="py-2 font-medium">Order</th>
-                                <th className="py-2 font-medium">Customer</th>
-                                <th className="hidden py-2 font-medium md:table-cell">
-                                    Placed
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Total
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Status
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.data.map((order) => (
-                                <tr key={order.id} className="border-b">
-                                    <td className="py-2.5">
-                                        <Link
-                                            href={orderShow(order.id)}
-                                            className="font-medium hover:underline"
-                                        >
-                                            {order.order_number}
-                                        </Link>
-                                    </td>
-                                    <td className="py-2.5">
-                                        <p>{order.customer?.name}</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {order.customer?.email}
-                                        </p>
-                                    </td>
-                                    <td className="hidden py-2.5 text-muted-foreground md:table-cell">
-                                        {formatDate(order.placed_at)}
-                                    </td>
-                                    <td className="py-2.5 text-right tabular-nums">
-                                        {formatPrice(
-                                            order.total_cents,
-                                            'en-US',
-                                        )}
-                                    </td>
-                                    <td className="py-2.5 text-right">
-                                        <OrderStatusBadge
-                                            status={order.status}
-                                        />
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left text-muted-foreground">
+                                    <th className="py-2 font-medium">Order</th>
+                                    <th className="py-2 font-medium">
+                                        Customer
+                                    </th>
+                                    <th className="hidden py-2 font-medium md:table-cell">
+                                        Placed
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Total
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Status
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {orders.data.map((order) => (
+                                    <tr key={order.id} className="border-b">
+                                        <td className="py-2.5">
+                                            <Link
+                                                href={orderShow(order.id)}
+                                                className="font-medium hover:underline"
+                                            >
+                                                {order.order_number}
+                                            </Link>
+                                        </td>
+                                        <td className="py-2.5">
+                                            <p>{order.customer?.name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {order.customer?.email}
+                                            </p>
+                                        </td>
+                                        <td className="hidden py-2.5 text-muted-foreground md:table-cell">
+                                            {formatDate(order.placed_at)}
+                                        </td>
+                                        <td className="py-2.5 text-right tabular-nums">
+                                            {formatPrice(
+                                                order.total_cents,
+                                                'en-US',
+                                            )}
+                                        </td>
+                                        <td className="py-2.5 text-right">
+                                            <OrderStatusBadge
+                                                status={order.status}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
                     {orders.meta.last_page > 1 && (
                         <div className="mt-4 flex justify-center gap-2">

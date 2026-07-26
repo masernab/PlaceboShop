@@ -250,90 +250,96 @@ export default function AdminCouponsIndex({ coupons }: CouponsIndexProps) {
 
             <Card>
                 <CardContent>
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b text-left text-muted-foreground">
-                                <th className="py-2 font-medium">Code</th>
-                                <th className="py-2 font-medium">Discount</th>
-                                <th className="hidden py-2 font-medium sm:table-cell">
-                                    Min subtotal
-                                </th>
-                                <th className="hidden py-2 font-medium md:table-cell">
-                                    Uses
-                                </th>
-                                <th className="hidden py-2 font-medium md:table-cell">
-                                    Window
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    Status
-                                </th>
-                                <th className="py-2 text-right font-medium">
-                                    <span className="sr-only">Actions</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {coupons.data.map((coupon) => (
-                                <tr key={coupon.id} className="border-b">
-                                    <td className="py-2.5 font-mono font-medium">
-                                        {coupon.code}
-                                    </td>
-                                    <td className="py-2.5 tabular-nums">
-                                        {describeValue(coupon)}
-                                    </td>
-                                    <td className="hidden py-2.5 tabular-nums sm:table-cell">
-                                        {coupon.min_subtotal_cents > 0
-                                            ? formatPrice(
-                                                  coupon.min_subtotal_cents,
-                                                  'en-US',
-                                              )
-                                            : '—'}
-                                    </td>
-                                    <td className="hidden py-2.5 tabular-nums md:table-cell">
-                                        {coupon.used_count}
-                                        {coupon.max_uses !== null &&
-                                            ` / ${coupon.max_uses}`}
-                                    </td>
-                                    <td className="hidden py-2.5 text-muted-foreground md:table-cell">
-                                        {coupon.starts_at ?? '—'} →{' '}
-                                        {coupon.expires_at ?? '∞'}
-                                    </td>
-                                    <td className="py-2.5 text-right">
-                                        <Badge
-                                            variant={
-                                                coupon.is_active
-                                                    ? 'secondary'
-                                                    : 'outline'
-                                            }
-                                        >
-                                            {coupon.is_active
-                                                ? 'Active'
-                                                : 'Inactive'}
-                                        </Badge>
-                                    </td>
-                                    <td className="py-2.5 text-right whitespace-nowrap">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Edit ${coupon.code}`}
-                                            onClick={() => setEditing(coupon)}
-                                        >
-                                            <Pencil />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label={`Delete ${coupon.code}`}
-                                            onClick={() => destroy(coupon)}
-                                            className="text-muted-foreground hover:text-destructive"
-                                        >
-                                            <Trash2 />
-                                        </Button>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left text-muted-foreground">
+                                    <th className="py-2 font-medium">Code</th>
+                                    <th className="py-2 font-medium">
+                                        Discount
+                                    </th>
+                                    <th className="hidden py-2 font-medium sm:table-cell">
+                                        Min subtotal
+                                    </th>
+                                    <th className="hidden py-2 font-medium md:table-cell">
+                                        Uses
+                                    </th>
+                                    <th className="hidden py-2 font-medium md:table-cell">
+                                        Window
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        Status
+                                    </th>
+                                    <th className="py-2 text-right font-medium">
+                                        <span className="sr-only">Actions</span>
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {coupons.data.map((coupon) => (
+                                    <tr key={coupon.id} className="border-b">
+                                        <td className="py-2.5 font-mono font-medium">
+                                            {coupon.code}
+                                        </td>
+                                        <td className="py-2.5 tabular-nums">
+                                            {describeValue(coupon)}
+                                        </td>
+                                        <td className="hidden py-2.5 tabular-nums sm:table-cell">
+                                            {coupon.min_subtotal_cents > 0
+                                                ? formatPrice(
+                                                      coupon.min_subtotal_cents,
+                                                      'en-US',
+                                                  )
+                                                : '—'}
+                                        </td>
+                                        <td className="hidden py-2.5 tabular-nums md:table-cell">
+                                            {coupon.used_count}
+                                            {coupon.max_uses !== null &&
+                                                ` / ${coupon.max_uses}`}
+                                        </td>
+                                        <td className="hidden py-2.5 text-muted-foreground md:table-cell">
+                                            {coupon.starts_at ?? '—'} →{' '}
+                                            {coupon.expires_at ?? '∞'}
+                                        </td>
+                                        <td className="py-2.5 text-right">
+                                            <Badge
+                                                variant={
+                                                    coupon.is_active
+                                                        ? 'secondary'
+                                                        : 'outline'
+                                                }
+                                            >
+                                                {coupon.is_active
+                                                    ? 'Active'
+                                                    : 'Inactive'}
+                                            </Badge>
+                                        </td>
+                                        <td className="py-2.5 text-right whitespace-nowrap">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Edit ${coupon.code}`}
+                                                onClick={() =>
+                                                    setEditing(coupon)
+                                                }
+                                            >
+                                                <Pencil />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label={`Delete ${coupon.code}`}
+                                                onClick={() => destroy(coupon)}
+                                                className="text-muted-foreground hover:text-destructive"
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </CardContent>
             </Card>
 

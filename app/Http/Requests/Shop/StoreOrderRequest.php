@@ -57,7 +57,7 @@ class StoreOrderRequest extends FormRequest
         $expiresAt = Carbon::create(2000 + (int) $year, (int) $month)?->endOfMonth();
 
         if ($expiresAt === null || $expiresAt->isPast()) {
-            $fail('The card has expired.');
+            $fail(__('shop.card_expired'));
         }
     }
 }

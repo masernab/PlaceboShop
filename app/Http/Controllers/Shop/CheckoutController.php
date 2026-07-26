@@ -58,7 +58,7 @@ class CheckoutController extends Controller
 
         if ($cardDigits === self::DECLINED_CARD) {
             throw ValidationException::withMessages([
-                'card_number' => 'Your card was declined. (Simulated — try 4242 4242 4242 4242.)',
+                'card_number' => __('shop.card_declined'),
             ]);
         }
 

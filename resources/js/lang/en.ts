@@ -15,6 +15,10 @@ const en = {
     'footer.disclaimer':
         'PlaceboShop is a placebo store: every purchase is simulated. No real money is ever charged and no products are ever shipped.',
     'common.language': 'Language',
+    'error.404_title': 'Page not found',
+    'error.404_body':
+        'This page is as imaginary as our shipments. Fortunately, the shop is very real (well, sort of).',
+    'error.cta': 'Back to the shop',
     'common.toggle_theme': 'Toggle dark mode',
     'home.hero_title': 'All the joy of shopping. None of the regret.',
     'home.hero_subtitle':

@@ -17,6 +17,10 @@ const es: Record<TranslationKey, string> = {
     'footer.disclaimer':
         'PlaceboShop es una tienda placebo: cada compra es simulada. Nunca se cobra dinero real ni se envía ningún producto.',
     'common.language': 'Idioma',
+    'error.404_title': 'Página no encontrada',
+    'error.404_body':
+        'Esta página es tan imaginaria como nuestros envíos. Por suerte, la tienda sí es real (bueno, más o menos).',
+    'error.cta': 'Volver a la tienda',
     'common.toggle_theme': 'Cambiar modo oscuro',
     'home.hero_title': 'Toda la alegría de comprar. Nada de remordimientos.',
     'home.hero_subtitle':
