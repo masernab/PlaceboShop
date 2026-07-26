@@ -31,11 +31,13 @@ export type AdminProductData = {
 
 export type AdminCategoryData = {
     id: number;
+    parent_id: number | null;
     slug: string;
     name: LocalizedField;
     description: Partial<LocalizedField> | null;
     position: number;
     products_count?: number;
+    children?: AdminCategoryData[];
 };
 
 export type AdminCouponData = {

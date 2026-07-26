@@ -20,11 +20,16 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'parent_id' => $this->parent_id,
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
             'position' => $this->position,
             'products_count' => $this->whenCounted('products'),
+            'children' => $this->whenLoaded(
+                'children',
+                fn (): array => self::collection($this->children)->resolve($request),
+            ),
         ];
     }
 }

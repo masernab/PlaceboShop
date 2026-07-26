@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Http\Resources\Admin\CategoryResource;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -16,8 +17,10 @@ class CategoryController extends Controller
     public function index(): Response
     {
         $categories = Category::query()
+            ->roots()
             ->ordered()
             ->withCount('products')
+            ->with(['children' => fn (Relation $query) => $query->withCount('products')])
             ->get();
 
         return Inertia::render('admin/categories/index', [
@@ -46,6 +49,12 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
+        if ($category->children()->exists()) {
+            return back()->withErrors([
+                'category' => 'This category still has subcategories. Delete or move them first.',
+            ]);
+        }
+
         if ($category->products()->exists()) {
             return back()->withErrors([
                 'category' => 'This category still has products. Move or delete them first.',

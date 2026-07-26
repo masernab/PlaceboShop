@@ -24,7 +24,7 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
-        $categories = Category::query()->ordered()->get();
+        $categories = Category::query()->roots()->ordered()->get();
 
         return Inertia::render('shop/home', [
             'featured' => ProductCardResource::collection($featured),

@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ShoppingBag } from 'lucide-react';
+import { ChevronRight, ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Price } from '@/components/shop/price';
@@ -99,14 +99,34 @@ export default function ProductShow({
                 </div>
 
                 <div>
-                    <Link
-                        href={productsIndex({
-                            query: { category: data.category.slug },
-                        })}
-                        className="text-sm text-muted-foreground hover:text-foreground"
-                    >
-                        {data.category.name}
-                    </Link>
+                    <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+                        {data.category.parent != null && (
+                            <>
+                                <Link
+                                    href={productsIndex({
+                                        query: {
+                                            category: data.category.parent.slug,
+                                        },
+                                    })}
+                                    className="hover:text-foreground"
+                                >
+                                    {data.category.parent.name}
+                                </Link>
+                                <ChevronRight
+                                    className="size-3.5 shrink-0"
+                                    aria-hidden
+                                />
+                            </>
+                        )}
+                        <Link
+                            href={productsIndex({
+                                query: { category: data.category.slug },
+                            })}
+                            className="hover:text-foreground"
+                        >
+                            {data.category.name}
+                        </Link>
+                    </nav>
                     <h1 className="mt-1 text-3xl font-bold tracking-tight">
                         {data.name}
                     </h1>

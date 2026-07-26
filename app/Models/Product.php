@@ -148,13 +148,24 @@ class Product extends Model
     }
 
     /**
+     * Match products in the given category or, when it is a top-level one,
+     * in any of its subcategories.
+     *
+     * The inner grouping closure is required: a bare `orWhereHas` would escape
+     * the relation's own correlation and match every product in the catalog.
+     *
      * @param  Builder<$this>  $query
      */
     #[Scope]
     protected function inCategory(Builder $query, string $slug): void
     {
         $query->whereHas('category', function (Builder $query) use ($slug): void {
-            $query->where('slug', $slug);
+            $query->where(function (Builder $query) use ($slug): void {
+                $query->where('slug', $slug)
+                    ->orWhereHas('parent', function (Builder $parent) use ($slug): void {
+                        $parent->where('slug', $slug);
+                    });
+            });
         });
     }
 

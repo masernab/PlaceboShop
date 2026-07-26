@@ -15,6 +15,7 @@ class CatalogTest extends TestCase
     public function test_home_shows_featured_products_and_categories()
     {
         $category = Category::factory()->create();
+        Category::factory()->childOf($category)->create();
         Product::factory()->featured()->for($category)->create();
         Product::factory()->for($category)->create();
 
@@ -53,6 +54,65 @@ class CatalogTest extends TestCase
         $response->assertOk()->assertInertia(fn (Assert $page) => $page
             ->has('products.data', 2)
             ->where('filters.category', 'fashion')
+        );
+    }
+
+    public function test_index_filters_by_parent_category_including_subcategories()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        $dresses = Category::factory()->childOf($fashion)->create(['slug' => 'dresses']);
+        $beauty = Category::factory()->create(['slug' => 'beauty']);
+        Product::factory()->for($fashion)->create();
+        Product::factory()->for($dresses)->count(2)->create();
+        Product::factory()->for($beauty)->create();
+
+        $response = $this->get('/products?category=fashion');
+
+        $response->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->has('products.data', 3)
+            ->where('filters.category', 'fashion')
+        );
+    }
+
+    public function test_index_filters_by_subcategory_excludes_the_rest_of_the_branch()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        $dresses = Category::factory()->childOf($fashion)->create(['slug' => 'dresses']);
+        Category::factory()->childOf($fashion)->create(['slug' => 'tops']);
+        Product::factory()->for($fashion)->create();
+        Product::factory()->for($dresses)->create();
+
+        $response = $this->get('/products?category=dresses');
+
+        $response->assertOk()->assertInertia(
+            fn (Assert $page) => $page->has('products.data', 1)
+        );
+    }
+
+    public function test_index_nests_subcategories_under_their_parent()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        Category::factory()->childOf($fashion)->create(['slug' => 'dresses']);
+
+        $response = $this->get('/products');
+
+        $response->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->has('categories.data', 1)
+            ->has('categories.data.0.children', 1)
+            ->where('categories.data.0.children.0.slug', 'dresses')
+        );
+    }
+
+    public function test_parent_category_count_includes_subcategory_products()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        $dresses = Category::factory()->childOf($fashion)->create();
+        Product::factory()->for($fashion)->create();
+        Product::factory()->for($dresses)->count(2)->create();
+
+        $this->get('/products')->assertInertia(fn (Assert $page) => $page
+            ->where('categories.data.0.products_count', 3)
+            ->where('categories.data.0.children.0.products_count', 2)
         );
     }
 
@@ -160,6 +220,29 @@ class CatalogTest extends TestCase
 
         $response->assertInertia(
             fn (Assert $page) => $page->has('related.data', 2)
+        );
+    }
+
+    public function test_show_exposes_the_parent_category_for_the_breadcrumb()
+    {
+        $fashion = Category::factory()->create(['slug' => 'fashion']);
+        $dresses = Category::factory()->childOf($fashion)->create(['slug' => 'dresses']);
+        $product = Product::factory()->for($dresses)->create();
+
+        $response = $this->get("/products/{$product->slug}");
+
+        $response->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('product.data.category.slug', 'dresses')
+            ->where('product.data.category.parent.slug', 'fashion')
+        );
+    }
+
+    public function test_show_has_no_parent_for_a_top_level_category()
+    {
+        $product = Product::factory()->create();
+
+        $this->get("/products/{$product->slug}")->assertInertia(
+            fn (Assert $page) => $page->where('product.data.category.parent', null)
         );
     }
 }

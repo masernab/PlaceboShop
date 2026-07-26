@@ -18,6 +18,7 @@ Laravel 13 + Inertia v3 + React 19 + TypeScript + Tailwind v4 + shadcn/ui + Fort
 | 6. Wishlist + reseñas | [06-wishlist-resenas.md](06-wishlist-resenas.md) | ✅ Completada |
 | 7. Panel de administración | [07-admin.md](07-admin.md) | ✅ Completada |
 | 8. Pulido (i18n completo, estados vacíos, responsive) | [08-pulido.md](08-pulido.md) | ✅ Completada |
+| 9. Subcategorías (árbol de 2 niveles) | [09-subcategorias.md](09-subcategorias.md) | ✅ Completada |
 
 Al completar tareas, marcar los checkboxes del documento de fase y actualizar esta tabla (⬜ Pendiente / 🔶 En curso / ✅ Completada).
 
@@ -37,7 +38,7 @@ Al completar tareas, marcar los checkboxes del documento de fase y actualizar es
 ## Esquema de BD
 
 1. `users.is_admin` boolean default false.
-2. `categories`: slug unique, `name` json, `description` json nullable, `position`.
+2. `categories`: slug unique, `name` json, `description` json nullable, `position`, `parent_id` nullable autorreferencial (árbol de 2 niveles, índice `(parent_id,position)`).
 3. `products`: category_id FK, slug unique, sku unique, `name`/`description` json, `price_cents`, `compare_at_price_cents` nullable, `stock` (cosmético), `is_active`, `is_featured`. Índices `(category_id,is_active)`, `price_cents`, `is_featured`.
 4. `product_images`: product_id FK, `path` relativo web, `alt`, `position`.
 5. `carts` (user_id nullable) + `cart_items` (unique `cart_id,product_id`; sin snapshot de precio).

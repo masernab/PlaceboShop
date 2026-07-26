@@ -22,10 +22,19 @@ class CategoryFactory extends Factory
         $name = Str::title(str_replace('-', ' ', $slug));
 
         return [
+            'parent_id' => null,
             'slug' => $slug,
             'name' => ['en' => $name, 'es' => $name],
             'description' => null,
             'position' => 0,
         ];
+    }
+
+    /**
+     * Nest the category under the given top-level category.
+     */
+    public function childOf(Category $parent): static
+    {
+        return $this->state(fn (): array => ['parent_id' => $parent->id]);
     }
 }

@@ -23,7 +23,20 @@ class CategoryResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->localized($this->name),
             'description' => $this->localized($this->description),
-            'products_count' => $this->whenCounted('products'),
+            // A top-level category rolls up its subcategories so the count
+            // matches what filtering by that category actually returns.
+            'products_count' => $this->whenCounted(
+                'products',
+                fn (int $count): int => $count + (int) ($this->child_products_count ?? 0),
+            ),
+            'parent' => $this->whenLoaded(
+                'parent',
+                fn (): self => new self($this->parent),
+            ),
+            'children' => $this->whenLoaded(
+                'children',
+                fn (): array => self::collection($this->children)->resolve($request),
+            ),
         ];
     }
 }

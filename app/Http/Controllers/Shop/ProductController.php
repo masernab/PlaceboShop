@@ -9,6 +9,7 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\ReviewResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -41,7 +42,12 @@ class ProductController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $categories = Category::query()->ordered()->withCount('products')->get();
+        $categories = Category::query()
+            ->roots()
+            ->ordered()
+            ->withCount(['products', 'childProducts'])
+            ->with(['children' => fn (Relation $query) => $query->withCount('products')])
+            ->get();
 
         return Inertia::render('shop/products/index', [
             'products' => ProductCardResource::collection($products),
@@ -54,7 +60,7 @@ class ProductController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['images', 'category']);
+        $product->load(['images', 'category.parent']);
         $product->loadAvg('reviews', 'rating');
         $product->loadCount('reviews');
 

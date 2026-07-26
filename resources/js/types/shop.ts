@@ -4,6 +4,8 @@ export type CategoryData = {
     name: string;
     description: string;
     products_count?: number;
+    parent?: CategoryData | null;
+    children?: CategoryData[];
 };
 
 export type ProductImageData = {

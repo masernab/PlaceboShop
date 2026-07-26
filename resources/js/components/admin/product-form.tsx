@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
@@ -44,6 +45,10 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     });
 
     const errors = form.errors as Record<string, string | undefined>;
+
+    const roots = categories.filter((category) => category.parent_id === null);
+    const childrenOf = (parentId: number) =>
+        categories.filter((category) => category.parent_id === parentId);
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -159,13 +164,23 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                                     <SelectValue placeholder="Pick one" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {categories.map((category) => (
-                                        <SelectItem
-                                            key={category.id}
-                                            value={String(category.id)}
-                                        >
-                                            {category.name.en}
-                                        </SelectItem>
+                                    {roots.map((root) => (
+                                        <SelectGroup key={root.id}>
+                                            <SelectItem value={String(root.id)}>
+                                                {root.name.en}
+                                            </SelectItem>
+                                            {childrenOf(root.id).map(
+                                                (child) => (
+                                                    <SelectItem
+                                                        key={child.id}
+                                                        value={String(child.id)}
+                                                        className="pl-6"
+                                                    >
+                                                        {child.name.en}
+                                                    </SelectItem>
+                                                ),
+                                            )}
+                                        </SelectGroup>
                                     ))}
                                 </SelectContent>
                             </Select>

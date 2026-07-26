@@ -1,7 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { CornerDownRight, Pencil, Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { toast } from 'sonner';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
     destroy as categoryDestroy,
     store as categoryStore,
     update as categoryUpdate,
@@ -25,14 +32,23 @@ type CategoriesIndexProps = {
     categories: { data: AdminCategoryData[] };
 };
 
+// Radix forbids an empty SelectItem value, so top level needs a sentinel.
+const NO_PARENT = 'none';
+
 function CategoryDialog({
     category,
+    roots,
     onClose,
 }: {
     category: AdminCategoryData | null;
+    roots: AdminCategoryData[];
     onClose: () => void;
 }) {
     const form = useForm({
+        parent_id:
+            category?.parent_id != null
+                ? String(category.parent_id)
+                : NO_PARENT,
         name: { en: category?.name.en ?? '', es: category?.name.es ?? '' },
         description: {
             en: category?.description?.en ?? '',
@@ -43,8 +59,17 @@ function CategoryDialog({
 
     const errors = form.errors as Record<string, string | undefined>;
 
+    const hasChildren = (category?.children?.length ?? 0) > 0;
+    const parentOptions = roots.filter((root) => root.id !== category?.id);
+
     const submit = (event: FormEvent) => {
         event.preventDefault();
+
+        form.transform((data) => ({
+            ...data,
+            parent_id:
+                data.parent_id === NO_PARENT ? null : Number(data.parent_id),
+        }));
 
         const options = {
             preserveScroll: true,
@@ -70,6 +95,40 @@ function CategoryDialog({
             </DialogHeader>
             <form onSubmit={submit} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-2 sm:col-span-2">
+                        <Label htmlFor="cat-parent">Parent category</Label>
+                        <Select
+                            value={form.data.parent_id}
+                            onValueChange={(value) =>
+                                form.setData('parent_id', value)
+                            }
+                            disabled={hasChildren}
+                        >
+                            <SelectTrigger id="cat-parent">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={NO_PARENT}>
+                                    None (top level)
+                                </SelectItem>
+                                {parentOptions.map((root) => (
+                                    <SelectItem
+                                        key={root.id}
+                                        value={String(root.id)}
+                                    >
+                                        {root.name.en}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {hasChildren && (
+                            <p className="text-xs text-muted-foreground">
+                                This category has subcategories, so it must stay
+                                top level.
+                            </p>
+                        )}
+                        <InputError message={errors.parent_id} />
+                    </div>
                     <div className="grid gap-2">
                         <Label htmlFor="cat-name-en">Name (EN)</Label>
                         <Input
@@ -154,6 +213,57 @@ function CategoryDialog({
     );
 }
 
+function CategoryRow({
+    category,
+    depth,
+    onEdit,
+    onDestroy,
+}: {
+    category: AdminCategoryData;
+    depth: number;
+    onEdit: (category: AdminCategoryData) => void;
+    onDestroy: (category: AdminCategoryData) => void;
+}) {
+    return (
+        <tr className="border-b">
+            <td className={depth > 0 ? 'py-2.5 pl-6' : 'py-2.5 font-medium'}>
+                <span className="flex items-center gap-1.5">
+                    {depth > 0 && (
+                        <CornerDownRight className="size-3.5 shrink-0 text-muted-foreground" />
+                    )}
+                    {category.name.en}
+                </span>
+            </td>
+            <td className="hidden py-2.5 sm:table-cell">{category.name.es}</td>
+            <td className="py-2.5 text-right tabular-nums">
+                {category.position}
+            </td>
+            <td className="py-2.5 text-right tabular-nums">
+                {category.products_count}
+            </td>
+            <td className="py-2.5 text-right whitespace-nowrap">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Edit ${category.name.en}`}
+                    onClick={() => onEdit(category)}
+                >
+                    <Pencil />
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Delete ${category.name.en}`}
+                    onClick={() => onDestroy(category)}
+                    className="text-muted-foreground hover:text-destructive"
+                >
+                    <Trash2 />
+                </Button>
+            </td>
+        </tr>
+    );
+}
+
 export default function AdminCategoriesIndex({
     categories,
 }: CategoriesIndexProps) {
@@ -207,44 +317,24 @@ export default function AdminCategoriesIndex({
                                 </tr>
                             </thead>
                             <tbody>
-                                {categories.data.map((category) => (
-                                    <tr key={category.id} className="border-b">
-                                        <td className="py-2.5 font-medium">
-                                            {category.name.en}
-                                        </td>
-                                        <td className="hidden py-2.5 sm:table-cell">
-                                            {category.name.es}
-                                        </td>
-                                        <td className="py-2.5 text-right tabular-nums">
-                                            {category.position}
-                                        </td>
-                                        <td className="py-2.5 text-right tabular-nums">
-                                            {category.products_count}
-                                        </td>
-                                        <td className="py-2.5 text-right whitespace-nowrap">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                aria-label={`Edit ${category.name.en}`}
-                                                onClick={() =>
-                                                    setEditing(category)
-                                                }
-                                            >
-                                                <Pencil />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                aria-label={`Delete ${category.name.en}`}
-                                                onClick={() =>
-                                                    destroy(category)
-                                                }
-                                                className="text-muted-foreground hover:text-destructive"
-                                            >
-                                                <Trash2 />
-                                            </Button>
-                                        </td>
-                                    </tr>
+                                {categories.data.map((parent) => (
+                                    <Fragment key={parent.id}>
+                                        <CategoryRow
+                                            category={parent}
+                                            depth={0}
+                                            onEdit={setEditing}
+                                            onDestroy={destroy}
+                                        />
+                                        {parent.children?.map((child) => (
+                                            <CategoryRow
+                                                key={child.id}
+                                                category={child}
+                                                depth={1}
+                                                onEdit={setEditing}
+                                                onDestroy={destroy}
+                                            />
+                                        ))}
+                                    </Fragment>
                                 ))}
                             </tbody>
                         </table>
@@ -264,6 +354,7 @@ export default function AdminCategoriesIndex({
                     <CategoryDialog
                         key={editing === 'new' ? 'new' : editing.id}
                         category={editing === 'new' ? null : editing}
+                        roots={categories.data}
                         onClose={() => setEditing(null)}
                     />
                 )}

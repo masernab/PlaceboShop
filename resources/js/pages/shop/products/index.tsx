@@ -124,30 +124,85 @@ export default function ProductsIndex({
                                     {t('products.all_categories')}
                                 </button>
                             </li>
-                            {categories.data.map((category) => (
-                                <li key={category.id}>
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            applyFilters({
-                                                category: category.slug,
-                                            })
-                                        }
-                                        data-active={
-                                            filters.category === category.slug
-                                        }
-                                        className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground hover:bg-accent hover:text-foreground data-[active=true]:font-semibold data-[active=true]:text-foreground"
-                                    >
-                                        <span>{category.name}</span>
-                                        {category.products_count !==
-                                            undefined && (
-                                            <span className="text-xs">
-                                                {category.products_count}
-                                            </span>
-                                        )}
-                                    </button>
-                                </li>
-                            ))}
+                            {categories.data.map((category) => {
+                                const branchActive =
+                                    filters.category === category.slug ||
+                                    (category.children?.some(
+                                        (child) =>
+                                            child.slug === filters.category,
+                                    ) ??
+                                        false);
+
+                                return (
+                                    <li key={category.id}>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                applyFilters({
+                                                    category: category.slug,
+                                                })
+                                            }
+                                            data-active={
+                                                filters.category ===
+                                                category.slug
+                                            }
+                                            className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground hover:bg-accent hover:text-foreground data-[active=true]:font-semibold data-[active=true]:text-foreground"
+                                        >
+                                            <span>{category.name}</span>
+                                            {category.products_count !==
+                                                undefined && (
+                                                <span className="text-xs">
+                                                    {category.products_count}
+                                                </span>
+                                            )}
+                                        </button>
+                                        {category.children !== undefined &&
+                                            category.children.length > 0 && (
+                                                <ul
+                                                    data-branch={branchActive}
+                                                    className="mt-0.5 ml-2 space-y-0.5 border-l pl-2 data-[branch=true]:border-foreground/30"
+                                                >
+                                                    {category.children.map(
+                                                        (child) => (
+                                                            <li key={child.id}>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        applyFilters(
+                                                                            {
+                                                                                category:
+                                                                                    child.slug,
+                                                                            },
+                                                                        )
+                                                                    }
+                                                                    data-active={
+                                                                        filters.category ===
+                                                                        child.slug
+                                                                    }
+                                                                    className="flex w-full items-center justify-between rounded-md px-2 py-1 text-left text-xs text-muted-foreground hover:bg-accent hover:text-foreground data-[active=true]:font-semibold data-[active=true]:text-foreground"
+                                                                >
+                                                                    <span>
+                                                                        {
+                                                                            child.name
+                                                                        }
+                                                                    </span>
+                                                                    {child.products_count !==
+                                                                        undefined && (
+                                                                        <span>
+                                                                            {
+                                                                                child.products_count
+                                                                            }
+                                                                        </span>
+                                                                    )}
+                                                                </button>
+                                                            </li>
+                                                        ),
+                                                    )}
+                                                </ul>
+                                            )}
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
 
