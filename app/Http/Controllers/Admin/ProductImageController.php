@@ -8,8 +8,11 @@ use App\Models\ProductImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Image\ImageException;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProductImageController extends Controller
 {
@@ -19,17 +22,15 @@ class ProductImageController extends Controller
     {
         $request->validate([
             'images' => ['required', 'array', 'max:6'],
-            'images.*' => ['image', 'max:4096'],
+            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif,bmp', 'max:12288'],
         ]);
 
         $position = (int) $product->images()->max('position') + 1;
 
         /** @var UploadedFile $file */
-        foreach ($request->file('images', []) as $file) {
-            $stored = $file->store('products', 'public_uploads');
-
+        foreach ($request->file('images', []) as $index => $file) {
             $product->images()->create([
-                'path' => self::UPLOAD_PREFIX.$stored,
+                'path' => self::UPLOAD_PREFIX.$this->compressAndStore($file, $index),
                 'alt' => $product->name['en'] ?? $product->slug,
                 'position' => $position,
             ]);
@@ -38,6 +39,36 @@ class ProductImageController extends Controller
         }
 
         return back();
+    }
+
+    /**
+     * Scale the upload down to the configured bounds, re-encode it and store it.
+     */
+    private function compressAndStore(UploadedFile $file, int $index): string
+    {
+        $config = config('images.products');
+
+        try {
+            $stored = Image::fromUpload($file)
+                ->orient()
+                ->scale($config['max_width'], $config['max_height'])
+                ->optimize($config['format'], $config['quality'])
+                ->store('products', 'public_uploads');
+        } catch (ImageException $e) {
+            report($e);
+
+            throw ValidationException::withMessages([
+                "images.{$index}" => __('This image could not be processed.'),
+            ]);
+        }
+
+        if ($stored === false) {
+            throw ValidationException::withMessages([
+                "images.{$index}" => __('This image could not be stored.'),
+            ]);
+        }
+
+        return $stored;
     }
 
     public function update(Request $request, ProductImage $productImage): RedirectResponse

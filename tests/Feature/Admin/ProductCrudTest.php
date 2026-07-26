@@ -119,6 +119,7 @@ class ProductCrudTest extends TestCase
 
         $image = $product->images()->orderBy('position')->first();
         $this->assertStringStartsWith('uploads/products/', $image->path);
+        $this->assertStringEndsWith('.webp', $image->path);
         Storage::disk('public_uploads')->assertExists(
             substr($image->path, strlen('uploads/')),
         );
@@ -129,6 +130,31 @@ class ProductCrudTest extends TestCase
         Storage::disk('public_uploads')->assertMissing(
             substr($image->path, strlen('uploads/')),
         );
+    }
+
+    public function test_oversized_uploads_are_scaled_down_and_recompressed()
+    {
+        Storage::fake('public_uploads');
+
+        $product = Product::factory()->create();
+        $upload = UploadedFile::fake()->image('huge.jpg', 4000, 3000);
+        $originalSize = $upload->getSize();
+
+        $this->actingAs($this->admin)->post(
+            "/admin/products/{$product->id}/images",
+            ['images' => [$upload]],
+        );
+
+        $image = $product->images()->sole();
+        $disk = Storage::disk('public_uploads');
+        $relative = substr($image->path, strlen('uploads/'));
+
+        [$width, $height] = getimagesizefromstring($disk->get($relative));
+
+        $this->assertLessThanOrEqual(config('images.products.max_width'), $width);
+        $this->assertLessThanOrEqual(config('images.products.max_height'), $height);
+        $this->assertSame(4 / 3, $width / $height);
+        $this->assertLessThan($originalSize, $disk->size($relative));
     }
 
     public function test_non_image_uploads_are_rejected()
