@@ -46,7 +46,7 @@ function CartLine({ item }: { item: CartItemData }) {
                 href={productShow(item.product.slug)}
                 className="w-20 shrink-0 sm:w-24"
             >
-                <div className="aspect-[4/5] overflow-hidden rounded-md bg-muted">
+                <div className="aspect-square overflow-hidden rounded-md bg-muted">
                     {item.product.image && (
                         <img
                             src={item.product.image.url}

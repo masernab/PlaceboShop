@@ -380,7 +380,7 @@ export default function Checkout({
                                 className="flex items-center gap-3"
                             >
                                 <div className="relative w-12 shrink-0">
-                                    <div className="aspect-[4/5] overflow-hidden rounded-md bg-muted">
+                                    <div className="aspect-square overflow-hidden rounded-md bg-muted">
                                         {item.product.image && (
                                             <img
                                                 src={item.product.image.url}

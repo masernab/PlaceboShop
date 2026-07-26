@@ -63,7 +63,7 @@ export default function OrderShow({ order, justPlaced }: OrderShowProps) {
                                 className="flex items-center gap-4 py-4"
                             >
                                 <div className="w-14 shrink-0">
-                                    <div className="aspect-[4/5] overflow-hidden rounded-md bg-muted">
+                                    <div className="aspect-square overflow-hidden rounded-md bg-muted">
                                         {item.image_url && (
                                             <img
                                                 src={item.image_url}

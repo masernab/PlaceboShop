@@ -8,6 +8,7 @@ import { QuantityInput } from '@/components/shop/quantity-input';
 import { ReviewsSection } from '@/components/shop/reviews-section';
 import { StarRating } from '@/components/shop/star-rating';
 import { WishlistButton } from '@/components/shop/wishlist-button';
+import { ZoomableImage } from '@/components/shop/zoomable-image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -58,12 +59,11 @@ export default function ProductShow({
 
             <div className="grid gap-10 lg:grid-cols-2">
                 <div>
-                    <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted">
+                    <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
                         {currentImage && (
-                            <img
+                            <ZoomableImage
                                 src={currentImage.url}
                                 alt={currentImage.alt}
-                                className="size-full object-cover"
                             />
                         )}
                         {onSale && (
@@ -90,7 +90,7 @@ export default function ProductShow({
                                     <img
                                         src={image.url}
                                         alt={image.alt}
-                                        className="aspect-[4/5] object-cover"
+                                        className="aspect-square object-cover"
                                     />
                                 </button>
                             ))}
