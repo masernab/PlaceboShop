@@ -20,5 +20,5 @@
 ### Técnica
 - [x] `.env.example` — notas de MAIL_MAILER=log y seeds.
 - [x] README breve: qué es PlaceboShop, setup (`migrate:fresh --seed`, `php artisan dev`), credenciales demo, tarjetas de prueba.
-- [ ] `composer test` + `npm run lint && npm run types:check && npm run build` finales en verde.
-- [ ] Revisión final del flujo completo en EN y ES (checklist de verificación de 00-overview).
+- [x] `composer test` + `npm run lint && npm run types:check && npm run build` finales en verde.
+- [x] Revisión final del flujo completo en EN y ES (checklist de verificación de 00-overview).
