@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { CreditCard, Lock, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -77,17 +78,19 @@ export default function Checkout({
     const translateCouponError = useCouponErrorTranslator();
     const [fakeProcessing, setFakeProcessing] = useState(false);
 
+    const name = usePage().props.auth.user?.name;
+
     const form = useForm({
-        ship_name: '',
+        ship_name: name ?? '',
         ship_line1: '',
         ship_line2: '',
         ship_city: '',
         ship_postal_code: '',
         ship_country: 'US',
-        card_name: '',
-        card_number: '',
-        card_expiry: '',
-        card_cvc: '',
+        card_name: name,
+        card_number: '4242 4242 4242 4242',
+        card_expiry: '12/29',
+        card_cvc: '123',
     });
 
     const busy = fakeProcessing || form.processing;
